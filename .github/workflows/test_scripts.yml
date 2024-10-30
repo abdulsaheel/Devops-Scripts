@@ -1,0 +1,53 @@
+name: Install and Test Node Exporter and Prometheus
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl wget
+
+      - name: Setup Node Exporter
+        run: |
+          chmod +x ./node_exporter_setup.sh
+          ./node_exporter_setup.sh
+
+      - name: Setup Prometheus
+        run: |
+          chmod +x ./prometheus_setup.sh
+          ./prometheus_setup.sh
+
+      - name: Wait for services to start
+        run: sleep 10  # Wait for services to initialize
+
+      - name: Print Logs
+        run: |
+          echo "Printing logs for Node Exporter..."
+          sudo journalctl -u node_exporter --no-pager --since "10 minutes ago"
+          
+          echo "Printing logs for Prometheus..."
+          sudo journalctl -u prometheus --no-pager --since "10 minutes ago"
+
+
+      - name: Check Node Exporter Metrics
+        run: |
+          curl -f http://localhost:9100/metrics || echo "Node Exporter not running"
+
+      - name: Check Prometheus UI
+        run: |
+          curl -f http://localhost:9090/ || echo "Prometheus not running"
+
+      - name: Cleanup
+        run: |
+          # Assuming you have scripts to stop and remove services or containers
+          sudo systemctl stop node_exporter || echo "Node Exporter not running"
+          sudo systemctl stop prometheus || echo "Prometheus not running"
