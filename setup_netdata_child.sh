@@ -7,6 +7,30 @@ PARENT_API_ENDPOINT="http://$PARENT_IP:5000/add_child"
 # Get the public IP of this instance
 PUBLIC_IP=$(curl -s ifconfig.me)
 
+# Function to install Netdata
+install_netdata() {
+    echo "Installing Netdata..."
+    # Update package lists and install required dependencies
+    sudo apt update
+    sudo apt install -y curl netcat
+
+    # Download and install Netdata
+    bash <(curl -Ss https://my-netdata.io/kickstart.sh)
+
+    # Ensure the service is enabled and started
+    sudo systemctl enable netdata
+    sudo systemctl start netdata
+
+    echo "Netdata installation completed."
+}
+
+# Check if Netdata is already installed
+if ! command -v netdata > /dev/null; then
+    install_netdata
+else
+    echo "Netdata is already installed."
+fi
+
 # Request a new API key from the parent node
 response=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"public_ip\":\"$PUBLIC_IP\"}" $PARENT_API_ENDPOINT)
 api_key=$(echo $response | jq -r '.api_key')
