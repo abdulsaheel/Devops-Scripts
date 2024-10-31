@@ -12,10 +12,7 @@ install_netdata() {
     echo "Installing Netdata..."
     # Update package lists and install required dependencies
     sudo apt update
-    sudo apt install -y curl netcat
-
-    # Download and install Netdata
-    bash <(curl -Ss https://my-netdata.io/kickstart.sh)
+    sudo apt install -y curl netcat netdata
 
     # Ensure the service is enabled and started
     sudo systemctl enable netdata
