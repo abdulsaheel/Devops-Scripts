@@ -25,6 +25,11 @@ jobs:
         run: |
           chmod +x ./prometheus_setup.sh
           ./prometheus_setup.sh
+      
+      - name: Setup Prometheus
+        run: |
+            chmod +x ./setup_netdata_child.sh
+            ./setup_netdata_child.sh
 
       - name: Wait for services to start
         run: sleep 10  # Wait for services to initialize
@@ -45,7 +50,11 @@ jobs:
       - name: Check Prometheus UI
         run: |
           curl -f http://localhost:9090/ || echo "Prometheus not running"
-
+      
+      - name: Check Child Node Dashboard
+        run: |
+            curl -f http://localhost:19999/ || echo "Child Node Netdata Dashboard not reachable"
+  
       - name: Cleanup
         run: |
           # Assuming you have scripts to stop and remove services or containers
