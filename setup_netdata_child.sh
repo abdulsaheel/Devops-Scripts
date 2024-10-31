@@ -31,12 +31,6 @@ get_stream_files_location() {
     # Define the stock configuration directory
     STOCK_CONFIG_DIR="/usr/lib/netdata/conf.d"
 
-    # Check if the stock configuration directory exists
-    if [ ! -d "$STOCK_CONFIG_DIR" ]; then
-        echo "ERROR: Stock configuration directory does not exist: $STOCK_CONFIG_DIR"
-        return 1
-    fi
-
     # Find and return the location of stream configuration files
     local stream_files
     stream_files=$(find "$STOCK_CONFIG_DIR" -name "stream.conf")
@@ -78,28 +72,16 @@ if [ -z "$STREAM_CONF" ]; then
     exit 1
 fi
 
-# Function to update or append settings in stream.conf
+# Function to update settings in stream.conf
 update_stream_conf() {
     local setting="$1"
     local value="$2"
     local conf_file="$3"
 
-    # Check if the setting already exists
-    if sudo grep -q "^\s*$setting =" "$conf_file"; then
-        # If it exists, replace the line
-        sudo sed -i "s/^\s*$setting =.*/$setting = $value/" "$conf_file"
-        echo "Updated: $setting = $value"
-    else
-        # If it doesn't exist, append the setting
-        echo "$setting = $value" | sudo tee -a "$conf_file" > /dev/null
-        echo "Added: $setting = $value"
-    fi
+    # Use sed to update the setting directly
+    sudo sed -i "s/^\s*$setting =.*/$setting = $value/" "$conf_file"
+    echo "Updated: $setting = $value"
 }
-
-# Ensure the [stream] section exists
-if ! sudo grep -q "\[stream\]" "$STREAM_CONF"; then
-    echo "[stream]" | sudo tee -a "$STREAM_CONF" > /dev/null
-fi
 
 # Update or add settings under the [stream] section
 update_stream_conf "enabled" "yes" "$STREAM_CONF"
