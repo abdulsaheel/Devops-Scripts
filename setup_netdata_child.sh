@@ -11,7 +11,7 @@ PUBLIC_IP=$(curl -s ifconfig.me)
 install_dependencies() {
     echo "Installing required packages..."
     sudo apt update
-    sudo apt install -y curl netcat jq netdata
+    sudo apt install -y netdata
 }
 
 # Function to install Netdata
@@ -24,6 +24,31 @@ install_netdata() {
     sudo systemctl start netdata
 
     echo "Netdata installation completed."
+}
+
+# Function to get the path of stream.conf
+get_stream_files_location() {
+    # Define the stock configuration directory
+    STOCK_CONFIG_DIR="/usr/lib/netdata/conf.d"
+
+    # Check if the stock configuration directory exists
+    if [ ! -d "$STOCK_CONFIG_DIR" ]; then
+        echo "ERROR: Stock configuration directory does not exist: $STOCK_CONFIG_DIR"
+        return 1
+    fi
+
+    # Find and return the location of stream configuration files
+    local stream_files
+    stream_files=$(find "$STOCK_CONFIG_DIR" -name "stream.conf")
+
+    # Check if any stream files were found
+    if [ -z "$stream_files" ]; then
+        echo "No stream configuration files found in $STOCK_CONFIG_DIR."
+        return 1
+    fi
+
+    echo "$stream_files"
+    return 0
 }
 
 # Check if Netdata is already installed
@@ -44,8 +69,14 @@ fi
 
 echo "Received API key: $api_key for public IP: $PUBLIC_IP"
 
-# Configure stream.conf on the child node
-STREAM_CONF="/etc/netdata/stream.conf"
+# Get the path of stream.conf
+STREAM_CONF=$(get_stream_files_location)
+
+# Check if the STREAM_CONF variable is set
+if [ -z "$STREAM_CONF" ]; then
+    echo "Could not find stream.conf. Exiting."
+    exit 1
+fi
 
 # Ensure the [stream] section exists
 if ! sudo grep -q "\[stream\]" "$STREAM_CONF"; then
