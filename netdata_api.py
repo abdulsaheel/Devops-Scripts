@@ -15,7 +15,7 @@ def add_child():
     child_ip = request.json.get('public_ip', 'unknown')
 
     # Prepare the entry to add to stream.conf
-    conf_entry = f"\n[{new_api_key}]\nenabled = yes  # Child node IP: {child_ip}\n"
+    conf_entry = f"\n[{new_api_key}]\nenabled = yes  # Child node IP: {child_ip}\n "
 
     # Append the new entry to stream.conf
     try:
