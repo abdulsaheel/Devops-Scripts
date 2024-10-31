@@ -78,27 +78,34 @@ if [ -z "$STREAM_CONF" ]; then
     exit 1
 fi
 
+# Function to update or append settings in stream.conf
+update_stream_conf() {
+    local setting="$1"
+    local value="$2"
+    local conf_file="$3"
+
+    # Check if the setting already exists
+    if sudo grep -q "^\s*$setting =" "$conf_file"; then
+        # If it exists, replace the line
+        sudo sed -i "s/^\s*$setting =.*/$setting = $value/" "$conf_file"
+        echo "Updated: $setting = $value"
+    else
+        # If it doesn't exist, append the setting
+        echo "$setting = $value" | sudo tee -a "$conf_file" > /dev/null
+        echo "Added: $setting = $value"
+    fi
+}
+
 # Ensure the [stream] section exists
 if ! sudo grep -q "\[stream\]" "$STREAM_CONF"; then
     echo "[stream]" | sudo tee -a "$STREAM_CONF" > /dev/null
 fi
 
-# Append or update settings under the [stream] section
-{
-    # Check if each setting exists; if not, print it
-    if ! sudo grep -q "^enabled = yes" "$STREAM_CONF"; then
-        echo "enabled = yes"
-    fi
-    if ! sudo grep -q "^destination = $PARENT_IP:19999" "$STREAM_CONF"; then
-        echo "destination = $PARENT_IP:19999"
-    fi
-    if ! sudo grep -q "^ssl skip certificate verification = yes" "$STREAM_CONF"; then
-        echo "ssl skip certificate verification = yes"
-    fi
-    if ! sudo grep -q "^api key = " "$STREAM_CONF"; then
-        echo "api key = $api_key"
-    fi
-} | sudo tee -a "$STREAM_CONF" > /dev/null
+# Update or add settings under the [stream] section
+update_stream_conf "enabled" "yes" "$STREAM_CONF"
+update_stream_conf "destination" "$PARENT_IP:19999" "$STREAM_CONF"
+update_stream_conf "ssl skip certificate verification" "yes" "$STREAM_CONF"
+update_stream_conf "api key" "$api_key" "$STREAM_CONF"
 
 # Update netdata.conf to allow network access
 NETDATA_CONF="/etc/netdata/netdata.conf"
