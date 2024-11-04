@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Get the Grafana URL and token from the user
+# Get the Grafana URL, token, and middleware server URL from the user
 read -p "Enter Grafana URL (e.g., http://localhost:3000): " grafana_url
 read -p "Enter Grafana API Token: " grafana_token
+read -p "Enter Middleware Server URL (e.g., http://middleware-server:5000): " middleware_url
 
 # Get system hostname and public IP address
 data_source_name="$(hostname) prometheus stream"
@@ -28,8 +29,8 @@ json_payload=$(cat <<EOF
 EOF
 )
 
-# Make the POST request to the Flask app
-response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "http://localhost:5000/create_dashboard" \
+# Make the POST request to the Flask app on the specified middleware server URL
+response=$(curl -s -w "%{http_code}" -o /dev/null -X POST "$middleware_url/create_dashboard" \
 -H "Content-Type: application/json" \
 -d "$json_payload")
 
