@@ -10,7 +10,7 @@ data_source_name="$(hostname) prometheus stream"
 data_source_uid="$(hostname -f | tr '.' '-' | tr '[:upper:]' '[:lower:]')"  # Convert FQDN to valid UID
 public_ip=$(curl -s http://ifconfig.me)
 data_source_url="http://$public_ip:9090"
-dashboard_title="$(hostname -f) Instance Metrics Dashboard"
+dashboard_title="$(hostname) Instance Metrics Dashboard"
 dashboard_description="This dashboard monitors metrics for the $(hostname -f) instance, providing real-time insights into CPU, memory, and network usage."
 
 # Create JSON payload
