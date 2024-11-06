@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Enable debugging
-set -x
 
 # Get the latest version of Prometheus
 LATEST_PROMETHEUS_VERSION=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | jq -r .tag_name)
