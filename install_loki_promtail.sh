@@ -183,9 +183,9 @@ scrape_configs:
     pipeline_stages:
       - docker: {}
       - regex:
-          expression: '(?P<log_level>ERROR|DEBUG|INFO|TRACE|WARN)'
+          expression: '(?P<log_level>ERROR|DEBUG|INFO|TRACE|WARN)'  # Extracts log level
       - labels:
-          log_level:
+          log_level:  # Adds log_level as a label
       - timestamp:
           source: timestamp
           format: "2006-01-02T15:04:05Z07:00"
@@ -197,6 +197,14 @@ scrape_configs:
           __path__: /var/lib/docker/containers/*/*-json.log
 
   - job_name: system
+    pipeline_stages:
+      - regex:
+          expression: '(?P<log_level>ERROR|DEBUG|INFO|TRACE|WARN)'  # Extracts log level from system logs
+      - labels:
+          log_level:  # Adds log_level as a label for system logs
+      - timestamp:
+          source: timestamp
+          format: "2006-01-02T15:04:05Z07:00"
     static_configs:
       - targets:
           - localhost
