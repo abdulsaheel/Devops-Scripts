@@ -26,8 +26,8 @@ json_payload=$(cat <<EOF
   "grafana_url": "$grafana_url",
   "bearer_token": "$bearer_token",
   "data_source_name": "$data_source_name",
-  "datasource_uid": "$datasource_uid",  # Only specify datasource_uid once
-  "dashboard_uid": "$datasource_uid",   # Use same UID for dashboard
+  "datasource_uid": "$datasource_uid",  
+  "dashboard_uid": "$datasource_uid",   
   "data_source_url": "$data_source_url",
   "basic_auth_user": "$basic_auth_user",
   "basic_auth_password": "$basic_auth_password",
