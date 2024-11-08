@@ -37,6 +37,10 @@ json_payload=$(cat <<EOF
 EOF
 )
 
+# Print out the JSON payload to debug and verify it's correct
+echo "Generated JSON payload:"
+echo "$json_payload"
+
 # Set the middleware URL, prompt user if needed
 read -p "Enter the Middleware URL (e.g., http://localhost:5000): " middleware_url
 
