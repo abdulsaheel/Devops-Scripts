@@ -8,17 +8,17 @@ echo
 
 # Automatically generate UID and names based on the hostname
 hostname=$(hostname)
-datasource_uid="${hostname}-loki-ds"
-data_source_name="${hostname} Loki Logs"           # Data source name set to "hostname Loki Logs"
-dashboard_title="${hostname} Logs Dashboard"       # Dashboard title set to "hostname Logs Dashboard"
-basic_auth_user="admin"                            # Username for Loki, fixed as "admin"
+datasource_uid="${hostname}-loki-ds"  # Set the datasource UID based on the hostname
+data_source_name="${hostname} Loki Logs"  # Data source name set to "hostname Loki Logs"
+dashboard_title="${hostname} Logs Dashboard"  # Dashboard title set to "hostname Logs Dashboard"
+basic_auth_user="admin"  # Username for Loki, fixed as "admin"
 
 # Define a generic, detailed description for the dashboard
 description="This dashboard provides comprehensive monitoring and log insights for ${hostname}. It integrates Loki as the primary data source to display real-time and historical logs, ensuring seamless observability and troubleshooting."
 
 # Get the public IP of the machine and set Loki URL
 public_ip=$(curl -s http://ifconfig.me)
-data_source_url="http://${public_ip}:3009"
+data_source_url="http://${public_ip}:3009"  # Set the Loki URL using public IP and port 3009
 
 # Prepare the JSON payload
 json_payload=$(cat <<EOF
@@ -26,8 +26,8 @@ json_payload=$(cat <<EOF
   "grafana_url": "$grafana_url",
   "bearer_token": "$bearer_token",
   "data_source_name": "$data_source_name",
-  "datasource_uid": "$datasource_uid",
-  "dashboard_uid": "$datasource_uid",  # Set dashboard_uid same as datasource_uid
+  "datasource_uid": "$datasource_uid",  # Only specify datasource_uid once
+  "dashboard_uid": "$datasource_uid",   # Use same UID for dashboard
   "data_source_url": "$data_source_url",
   "basic_auth_user": "$basic_auth_user",
   "basic_auth_password": "$basic_auth_password",
