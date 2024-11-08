@@ -27,6 +27,7 @@ json_payload=$(cat <<EOF
   "bearer_token": "$bearer_token",
   "data_source_name": "$data_source_name",
   "datasource_uid": "$datasource_uid",
+  "dashboard_uid": "$datasource_uid",  # Set dashboard_uid same as datasource_uid
   "data_source_url": "$data_source_url",
   "basic_auth_user": "$basic_auth_user",
   "basic_auth_password": "$basic_auth_password",
